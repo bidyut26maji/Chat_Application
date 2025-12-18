@@ -1,11 +1,6 @@
 {
+  "private": true,
   "name": "chat-application",
   "version": "1.0.0",
-  "description": "Real-time chat application with rooms and direct messaging",
-  "scripts": {
-    "install-server": "cd chat-app/server && npm install",
-    "install-client": "cd chat-app/client && npm install",
-    "build-client": "cd chat-app/client && npm run build",
-    "start": "cd chat-app/server && npm start"
-  }
+  "description": "Real-time chat application with rooms and direct messaging"
 }
