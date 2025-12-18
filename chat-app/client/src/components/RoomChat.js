@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { API_URL } from '../config';
 
 const RoomChat = () => {
   const { roomId } = useParams();
@@ -28,7 +29,7 @@ const RoomChat = () => {
     const fetchRoom = async () => {
       if (!room) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/rooms/number/${roomId}`);
+          const res = await axios.get(`${API_URL}/api/rooms/number/${roomId}`);
           setRoom(res.data);
         } catch (error) {
           console.error('Error fetching room:', error);
@@ -46,7 +47,7 @@ const RoomChat = () => {
     const fetchMessages = async () => {
       if (room?._id) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/rooms/${room._id}/messages`);
+          const res = await axios.get(`${API_URL}/api/rooms/${room._id}/messages`);
           setMessages(res.data);
         } catch (error) {
           console.error('Error fetching messages:', error);
@@ -153,7 +154,7 @@ const RoomChat = () => {
     const messageText = newMessage;
     try {
       // Save to database
-      const res = await axios.post(`http://localhost:5000/api/rooms/${room._id}/messages`, {
+      const res = await axios.post(`${API_URL}/api/rooms/${room._id}/messages`, {
         text: messageText,
         replyTo: replyingTo
       });
@@ -202,7 +203,7 @@ const RoomChat = () => {
 
   const handleLeaveRoom = async () => {
     try {
-      await axios.post(`http://localhost:5000/api/rooms/${room._id}/leave`);
+      await axios.post(`${API_URL}/api/rooms/${room._id}/leave`);
       navigate('/rooms');
     } catch (error) {
       console.error('Error leaving room:', error);
@@ -235,7 +236,7 @@ const RoomChat = () => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/rooms/${room._id}/messages/${messageId}`);
+      await axios.delete(`${API_URL}/api/rooms/${room._id}/messages/${messageId}`);
       setMessages(messages.filter(msg => msg._id !== messageId));
       
       // Emit socket event to notify room members

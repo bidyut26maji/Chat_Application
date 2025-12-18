@@ -12,15 +12,24 @@ const roomRoutes = require('./routes/rooms');
 
 const app = express();
 const server = http.createServer(app);
+
+// Configure CORS for production
+const allowedOrigins = process.env.CLIENT_URL 
+  ? [process.env.CLIENT_URL, "http://localhost:3000"]
+  : ["http://localhost:3000"];
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
 
 // Database connection

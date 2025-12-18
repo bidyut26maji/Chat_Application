@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 const MyRooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -13,7 +14,7 @@ const MyRooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/rooms/my-rooms');
+        const res = await axios.get(`${API_URL}/api/rooms/my-rooms`);
         setRooms(res.data);
       } catch (error) {
         console.error('Error fetching rooms:', error);

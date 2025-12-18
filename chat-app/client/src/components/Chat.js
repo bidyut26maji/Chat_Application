@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { API_URL } from '../config';
 
 const Chat = () => {
   const [conversations, setConversations] = useState([]);
@@ -23,7 +24,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/messages/conversations');
+        const res = await axios.get(`${API_URL}/api/messages/conversations`);
         setConversations(res.data);
       } catch (error) {
         console.error('Error fetching conversations:', error);
@@ -38,7 +39,7 @@ const Chat = () => {
     const fetchMessages = async () => {
       if (currentChat) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/messages/${currentChat._id}`);
+          const res = await axios.get(`${API_URL}/api/messages/${currentChat._id}`);
           setMessages(res.data);
         } catch (error) {
           console.error('Error fetching messages:', error);
@@ -97,7 +98,7 @@ const Chat = () => {
     const searchUsers = async () => {
       if (searchQuery.trim()) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/users/search?query=${searchQuery}`);
+          const res = await axios.get(`${API_URL}/api/users/search?query=${searchQuery}`);
           setSearchResults(res.data);
         } catch (error) {
           console.error('Error searching users:', error);
@@ -119,7 +120,7 @@ const Chat = () => {
     const messageText = newMessage;
 
     try {
-      const res = await axios.post('http://localhost:5000/api/messages', {
+      const res = await axios.post(`${API_URL}/api/messages`, {
         conversationId: currentChat._id,
         text: messageText,
         replyTo: replyingTo
@@ -168,7 +169,7 @@ const Chat = () => {
 
   const startConversation = async (selectedUser) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/messages/conversation', {
+      const res = await axios.post(`${API_URL}/api/messages/conversation`, {
         receiverId: selectedUser._id
       });
 
@@ -215,7 +216,7 @@ const Chat = () => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/messages/${messageId}`);
+      await axios.delete(`${API_URL}/api/messages/${messageId}`);
       setMessages(messages.filter(msg => msg._id !== messageId));
       
       // Emit socket event to notify other user

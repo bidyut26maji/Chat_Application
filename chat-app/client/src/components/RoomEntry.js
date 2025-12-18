@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const RoomEntry = () => {
   const [mode, setMode] = useState('join'); // 'join' or 'create'
@@ -22,7 +23,7 @@ const RoomEntry = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/rooms/join', {
+      const res = await axios.post(`${API_URL}/api/rooms/join`, {
         roomNumber,
         password
       });
@@ -43,7 +44,7 @@ const RoomEntry = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/rooms/create', {
+      const res = await axios.post(`${API_URL}/api/rooms/create`, {
         roomNumber,
         name: roomName,
         description,
@@ -52,7 +53,7 @@ const RoomEntry = () => {
       });
       
       // After creating, join the room
-      const joinRes = await axios.post('http://localhost:5000/api/rooms/join', {
+      const joinRes = await axios.post(`${API_URL}/api/rooms/join`, {
         roomNumber,
         password: isPrivate ? password : ''
       });
