@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import Login from './components/Login';
 import Register from './components/Register';
-import Chat from './components/Chat';
 import RoomEntry from './components/RoomEntry';
 import RoomChat from './components/RoomChat';
 import MyRooms from './components/MyRooms';
@@ -87,16 +86,6 @@ function App() {
                 <PrivateRoute>
                   <SocketProvider>
                     <MyRooms />
-                  </SocketProvider>
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/chat" 
-              element={
-                <PrivateRoute>
-                  <SocketProvider>
-                    <Chat />
                   </SocketProvider>
                 </PrivateRoute>
               } 

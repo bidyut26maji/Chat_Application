@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { API_URL } from '../config';
 
 const RoomEntry = () => {
-  const [mode, setMode] = useState('join'); // 'join' or 'create'
+  const [mode, setMode] = useState('join'); // 'join', 'create', or 'browse'
   const [roomNumber, setRoomNumber] = useState('');
   const [roomName, setRoomName] = useState('');
   const [description, setDescription] = useState('');
@@ -13,9 +13,44 @@ const RoomEntry = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [publicRooms, setPublicRooms] = useState([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
 
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+  // Fetch public rooms when browse mode is selected
+  useEffect(() => {
+    if (mode === 'browse') {
+      fetchPublicRooms();
+    }
+  }, [mode]);
+
+  const fetchPublicRooms = async () => {
+    setLoadingRooms(true);
+    try {
+      const res = await axios.get(`${API_URL}/api/rooms/public`);
+      setPublicRooms(res.data);
+    } catch (err) {
+      console.error('Error fetching public rooms:', err);
+    } finally {
+      setLoadingRooms(false);
+    }
+  };
+
+  const handleJoinPublicRoom = async (room) => {
+    try {
+      const res = await axios.post(`${API_URL}/api/rooms/join`, {
+        roomNumber: room.roomNumber,
+        password: ''
+      });
+      navigate(`/room/${res.data.room._id}`, { 
+        state: { room: res.data.room } 
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to join room');
+    }
+  };
 
   const handleJoinRoom = async (e) => {
     e.preventDefault();
@@ -83,6 +118,12 @@ const RoomEntry = () => {
 
         <div className="room-tabs">
           <button 
+            className={`tab-btn ${mode === 'browse' ? 'active' : ''}`}
+            onClick={() => setMode('browse')}
+          >
+            Browse Rooms
+          </button>
+          <button 
             className={`tab-btn ${mode === 'join' ? 'active' : ''}`}
             onClick={() => setMode('join')}
           >
@@ -98,7 +139,38 @@ const RoomEntry = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {mode === 'join' ? (
+        {mode === 'browse' ? (
+          <div className="public-rooms-list">
+            <h3>🌐 Public Rooms</h3>
+            {loadingRooms ? (
+              <p>Loading rooms...</p>
+            ) : publicRooms.length === 0 ? (
+              <p className="no-rooms">No public rooms available. Create one!</p>
+            ) : (
+              <div className="rooms-grid">
+                {publicRooms.map((room) => (
+                  <div key={room._id} className="room-card">
+                    <div className="room-card-header">
+                      <h4>{room.name}</h4>
+                      <span className="room-number">#{room.roomNumber}</span>
+                    </div>
+                    {room.description && <p className="room-description">{room.description}</p>}
+                    <div className="room-card-footer">
+                      <span className="room-creator">by {room.createdBy?.username}</span>
+                      <span className="room-participants">{room.participants?.length || 0} members</span>
+                    </div>
+                    <button 
+                      className="join-room-btn"
+                      onClick={() => handleJoinPublicRoom(room)}
+                    >
+                      Join Room
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : mode === 'join' ? (
           <form onSubmit={handleJoinRoom} className="room-form">
             <div className="form-group">
               <label>Room Number</label>
@@ -197,9 +269,6 @@ const RoomEntry = () => {
         <div className="room-links">
           <button onClick={() => navigate('/my-rooms')} className="link-btn">
             📋 My Rooms
-          </button>
-          <button onClick={() => navigate('/chat')} className="link-btn">
-            💬 Direct Messages
           </button>
         </div>
       </div>

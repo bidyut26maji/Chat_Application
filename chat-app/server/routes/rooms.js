@@ -94,6 +94,19 @@ router.get('/number/:roomNumber', auth, async (req, res) => {
   }
 });
 
+// Get all public rooms
+router.get('/public', auth, async (req, res) => {
+  try {
+    const rooms = await Room.find({ isPrivate: false })
+      .populate('createdBy', 'username')
+      .sort({ updatedAt: -1 });
+
+    res.json(rooms);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Get user's rooms
 router.get('/my-rooms', auth, async (req, res) => {
   try {
