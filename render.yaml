@@ -3,26 +3,26 @@ services:
   - type: web
     name: chat-app-server
     runtime: node
-    rootDir: chat-app/server
+    root: chat-app/server
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: MONGO_URI
+      - key: MONGODB_URI
         sync: false
       - key: JWT_SECRET
         sync: false
       - key: PORT
-        value: 5000
+        value: 10000
 
   # Frontend React App
   - type: web
     name: chat-app-client
     runtime: static
-    rootDir: chat-app/client
+    root: chat-app/client
     buildCommand: npm install && npm run build
-    staticPublishPath: build
+    staticPublishPath: ./build
     envVars:
       - key: REACT_APP_API_URL
         sync: false
