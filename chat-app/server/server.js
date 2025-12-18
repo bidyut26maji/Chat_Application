@@ -32,6 +32,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Chat API is running' });
+});
+
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
