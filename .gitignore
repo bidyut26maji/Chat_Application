@@ -1,0 +1,48 @@
+# Node dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Testing coverage
+coverage/
+
+# Build outputs
+build/
+dist/
+.next/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# VS Code
+.vscode/
+
+# Parcel/rollup caches
+.cache/
+.parcel-cache/
+
+# Storybook
+out/
+.storybook-static/
+
+# Misc
+*.log
